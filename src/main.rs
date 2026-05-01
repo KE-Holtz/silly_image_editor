@@ -10,7 +10,7 @@ use ratatui::{
 };
 use ratatui_image::{
     StatefulImage,
-    picker::{self, Picker},
+    picker::Picker,
     protocol::StatefulProtocol,
 };
 
@@ -241,13 +241,28 @@ impl App {
     }
 
     fn save_changes(&mut self) {
-        self.source_image = self.source_image.huerotate(self.hue_rotation);
+        self.source_image = if self.sharpness_sigma != 0.0 {
+            self.source_image
+                .huerotate(self.hue_rotation)
+                .brighten(self.brightness_adjustment)
+                .adjust_contrast(self.contrast_adjustment)
+                .blur(self.blur)
+                .unsharpen(self.sharpness_sigma, self.sharpness_threshold)
+        } else {
+            self.source_image
+                .huerotate(self.hue_rotation)
+                .brighten(self.brightness_adjustment)
+                .adjust_contrast(self.contrast_adjustment)
+                .blur(self.blur)
+        };
         self.original_image = self.picker.new_resize_protocol(self.source_image.clone());
         self.modified_image = self.picker.new_resize_protocol(self.source_image.clone());
         self.hue_rotation = 0;
         self.brightness_adjustment = 0;
         self.contrast_adjustment = 0.0;
         self.blur = 0.0;
+        self.sharpness_sigma = 0.0;
+        self.sharpness_threshold = 0;
     }
 
     fn table_style(&self, row_mode: Mode) -> Style {
