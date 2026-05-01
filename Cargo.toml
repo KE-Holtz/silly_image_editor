@@ -1,0 +1,11 @@
+[package]
+name = "silly_image_editor"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ratatui = "0.30.0"
+crossterm = "0.29.0"
+ratatui-image = { version = "10.0.6", default-features = false, features = ["image-defaults", "crossterm"] }
+image = "0.25.10"
+
